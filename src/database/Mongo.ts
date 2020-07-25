@@ -1,7 +1,8 @@
 import { connect } from 'mongoose';
+import config from 'config.json';
 
 const db = async () => {
-    return await connect('mongodb+srv://admin:admin@cluster0-hzu4f.gcp.mongodb.net/test?retryWrites=true&w=majority', {
+    return await connect(config.mongooseLink, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });

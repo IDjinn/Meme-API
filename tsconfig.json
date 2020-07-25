@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "resolveJsonModule": true,
     "newLine": "crlf",
     "charset": "utf-8",
     "pretty": true,
