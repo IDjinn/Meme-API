@@ -1,5 +1,5 @@
 import { connect } from 'mongoose';
-import config from 'config.json';
+const config = require('../../config.json');
 
 const db = async () => {
     return await connect(config.mongooseLink, {

@@ -1,3 +1,4 @@
 {
-    "mongooseLink": ""
+    "mongooseLink": "",
+    "port": 3000
 }

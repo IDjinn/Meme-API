@@ -1,32 +1,34 @@
 import connectDatabase from './database/Mongo';
-import express, { Express, Response, Request } from 'express';
+import express, { Express } from 'express';
 import bodyParser from 'body-parser';
-import Meme from './database/models/Meme';
+import RandomRoute from './routes/memes/RandomRoute';
+import MainRoute from './routes/MainRoute';
+const config = require('../../config.json');
 
-connectDatabase();
-const app = express();
+export class Server {
+    public readonly app: Express;
 
-app.use('/public', express.static('public'));
+    constructor() {
+        connectDatabase();
 
-app.get('/', (req: Request, res: Response) => {
-    return res.json({ hello: "world!" });
-});
+        this.app = express();
+        this.app.use('/public', express.static('public'));
+        this.app.use(bodyParser.urlencoded({ extended: true }));
+        this.app.use(bodyParser.json());
+        this.app.listen(config.port);
+        this.attachRoutes();
+        console.log(`Server listen at port ${config.port}.`);
+    }
 
-app.get('/memes/random', async (req: Request, res: Response) => {
-    const meme = Array.from(await Meme.aggregate([{ $sample: { size: 1 } }]))[0];
-    return res.redirect(`/public/${meme._id}.${meme.fileType === 0 ? 'png' : 'jpg'}`);
-});
-/*
-app.get('/memes/category/:category', async (req: Request, res: Response) => {
-    const meme = Array.from(await Meme.aggregate([{ $sample: { size: 1 } }]))[0];
-    return res.redirect(`/public/${meme._id}.${meme.fileType === 0 ? 'png' : 'jpg'}`);
-});
+    private attachRoutes() {
+        const routes = [
+            new MainRoute(),
+            new RandomRoute(),
+        ];
+        routes.forEach(route => route.attach(this));
+    }
 
-app.post('/memes/:meme', (req: Request, res: Response) => {
-    
-});
-*/
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.listen(3000);
-console.log('Server listen at port 3000.');
+}
+
+const server = new Server();
+export default server;
